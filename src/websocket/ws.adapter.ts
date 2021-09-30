@@ -7,15 +7,17 @@ import { CommonEventData } from 'src';
 
 export class WsAdapter implements WebSocketAdapter {
 
+  private readonly logger = new Logger(WsAdapter.name)
+
   constructor(private app: INestApplicationContext) { }
 
   create(port: number, options: any = {}): any {
-    Logger.log('ws create')
+    this.logger.log('ws create')
     return new WebSocket.Server({ port, ...options })
   }
 
   bindClientConnect(server, callback: Function) {
-    Logger.log('ws bindClientConnect, server:\n', server)
+    this.logger.log('ws bind client connect')
     server.on('connection', callback)
   }
 
@@ -24,7 +26,7 @@ export class WsAdapter implements WebSocketAdapter {
     handlers: MessageMappingProperties[],
     process: (data: any) => Observable<any>,
   ) {
-    Logger.log('new connect')
+    this.logger.log('new connect')
     fromEvent(client, 'message')
       .pipe(
         mergeMap(data => this.bindMessageHandler(client, data, handlers, process)),
@@ -43,7 +45,7 @@ export class WsAdapter implements WebSocketAdapter {
     try {
       message = JSON.parse(buffer.data)
     } catch (error) {
-      Logger.error('Error parsing json: ', error)
+      this.logger.error('Error parsing json: ', error)
       return EMPTY
     }
 
@@ -51,14 +53,14 @@ export class WsAdapter implements WebSocketAdapter {
       handler => handler.message === message.post_type
     )
     if (!messageHandler) {
-      Logger.warn('No message handler: ' + JSON.stringify(message))
+      this.logger.warn('No message handler: ' + JSON.stringify(message))
       return EMPTY
     }
     return process(messageHandler.callback(message))
   }
 
   close(server) {
-    Logger.log('ws server close')
+    this.logger.log('ws server close')
     server.close()
   }
 }

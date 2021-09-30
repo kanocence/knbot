@@ -5,6 +5,8 @@ const service = axios.create({
   timeout: 30000
 })
 
+const logger = new Logger('request')
+
 /**
  * 添加请求拦截器
  * 记录日志
@@ -13,7 +15,7 @@ service.interceptors.request.use((config: AxiosRequestConfig) => {
   // logger.debug('send request:', config)
   return config
 }, (error) => {
-  Logger.error('request err:', error)
+  logger.error('request err:', error)
   return Promise.reject(error)
 })
 
@@ -25,7 +27,7 @@ service.interceptors.response.use((response: AxiosResponse) => {
   // logger.debug('request response:', response)
   return response.data
 }, (error) => {
-  Logger.error('response err:', error)
+  logger.error('response err:', error)
   return Promise.reject(error)
 })
 

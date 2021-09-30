@@ -4,6 +4,8 @@ import { HeartbeatMetaEventData, LifecycleMetaEventData, Module } from 'src'
 @Injectable()
 export class MetaEventService {
 
+  private readonly logger = new Logger(MetaEventService.name)
+
   commonMethods: Module[] = []
   lifecycleMethods: Module[] = []
   heartbeatModules: Module[] = []

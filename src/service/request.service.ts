@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { FriendRequestEventData, GroupRequestEventData, Module } from 'src'
 
 @Injectable()
 export class RequestService {
+
+  private readonly logger = new Logger(RequestService.name)
 
   commonMethods: Module[] = []
   friendMethods: Module[] = []

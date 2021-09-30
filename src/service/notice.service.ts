@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, Logger } from '@nestjs/common'
 import { FriendRecallNoticeEventData, GroupAdminNoticeEventData, GroupBanNoticeEventData, GroupDecreaseNoticeEventData, GroupIncreaseNoticeEventData, GroupRecallNoticeEventData, GroupUploadNoticeEventData, HonorNoticeEventData, LuckyKingNoticeEventData, Module, PockNoticeEventData } from 'src';
 
 @Injectable()
 export class NoticeService {
+
+  private readonly logger = new Logger(NoticeService.name)
 
   commonMethods: Module[] = []
   group_uploadMethods: Module[] = []

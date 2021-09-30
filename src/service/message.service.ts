@@ -5,6 +5,8 @@ import { BotService } from './bot.service';
 @Injectable()
 export class MessageService {
 
+  private readonly logger = new Logger(MessageService.name)
+
   commonMethods: Module[] = []
   privateMethods: Module[] = []
   groupMethods: Module[] = []

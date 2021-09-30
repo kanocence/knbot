@@ -16,12 +16,14 @@ getConfig()
 @WebSocketGateway(global.config.server['ws-port'])
 export class WsStartGateway {
 
+  private readonly logger = new Logger(WsStartGateway.name)
+
   constructor(
     private metaEventService: MetaEventService,
     private requestService: RequestService,
     private messageService: MessageService,
     private noticeService: NoticeService) {
-    Logger.log('The websocket runs on port :>> ' + global.config.server['ws-port'])
+    this.logger.log('The websocket runs on port :>> ' + global.config.server['ws-port'])
   }
 
   /**
@@ -67,7 +69,7 @@ export class WsStartGateway {
 
 function getConfig() {
   let confPath = `${path.resolve(__dirname, '..', '..')}${path.sep}config.yml`
-  console.debug('config path:', confPath)
+  new Logger('config').debug('config path:', confPath)
   try {
     accessSync(confPath, constants.R_OK | constants.W_OK)
     global.config = yaml.load(readFileSync(confPath, 'utf8')) as any
