@@ -1,3 +1,41 @@
+/**
+ * 发送API的类型
+ */
+export type ApiType =
+  'send_private_msg' | 'send_group_msg' | 'send_msg' | 'delete_msg' | 'get_msg' |
+  'get_forward_msg' | 'send_like' | 'set_group_kick' | 'set_group_ban' |
+  'set_group_anonymous_ban' | 'set_group_whole_ban' | 'set_group_admin' |
+  'set_group_anonymous' | 'set_group_card' | 'set_group_name' | 'set_group_leave' |
+  'set_group_special_title' | 'set_friend_add_request' | 'set_group_add_request' |
+  'get_login_info' | 'get_stranger_info' | 'get_friend_list' | 'get_group_info' |
+  'get_group_list' | 'get_group_member_info' | 'get_group_member_list' | 'get_group_honor_info' |
+  'get_cookies' | 'get_csrf_token' | 'get_credentials' | 'get_record' |
+  'get_image' | 'can_send_image' | 'can_send_record' | 'get_status' |
+  'get_version_info' | 'set_restart' | 'clean_cache'
+
+/** 注册机器人信息 */
+export interface Bot {
+  url: string
+  id: number
+  token?: string
+  online?: boolean
+}
+
+/**
+ * bot的事件处理模块
+ * - ~~type: EventName | []~~
+ * - validator: ()
+ * - processor: ()
+ */
+ export interface Module {
+  // type: EventName | EventName[]
+  validator: (msg: any) => boolean
+  processor: (msg: any, send: SendFunc) => void
+}
+
+/** 发送指令给bot的方法 */
+export type SendFunc = (type: ApiType, resp: any, msg: CommonEventData) => Promise<AxiosResponse<any>>
+
 /** 公共事件对象 */
 export interface CommonEventData {
   /** 收到事件的机器人 QQ 号 */
@@ -311,4 +349,188 @@ export interface HeartbeatMetaEventData extends CommonMetaEventData {
   status: object
   /** 到下次心跳的间隔，单位毫秒 */
   interval: number
+}
+
+
+/**
+ * 消息是 OneBot 标准中一个重要的数据类型，在发送消息的 API 和接收消息的事件中都有相关字段。
+ * 
+ * 目前消息的格式分为两种：字符串（string）和数组（array）。
+ * 
+ * [参考 OneBot v11 中的定义](https://github.com/botuniverse/onebot/blob/master/v11/specs/message/segment.md)
+ */
+ export interface Message {
+  /** 其中 type 字段的类型为字符串，对应 CQ 码中的「功能名」 */
+  type: 'text' | 'face' | 'image' | 'record' | 'video' | 'at' | 'rps' | 'dice' | 'shake' | 'poke' | 'anonymous' |
+  'share' | 'contact' | 'location' | 'music' | 'reply' | 'forward' | 'node' | 'xml' | 'json'
+  /** data 字段的类型为对象，对应 CQ 码的「参数」，此字段可为 null */
+  data: {
+    [key: string]: string | { [key: string]: string | { [key: string]: string } }
+  } | null
+}
+/** 纯文本 */
+export interface ArrayMessageText extends Message {
+  type: 'text'
+  data: { text: string }
+}
+/** QQ 表情 */
+export interface ArrayMessageFace extends Message {
+  type: 'face'
+  data: { id: string }
+}
+/** 图片 */
+export interface ArrayMessageImage extends Message {
+  type: 'image'
+  data: {
+    file: string
+    type: string
+    url?: string
+    cache?: string
+    proxy?: string
+    timeout?: string
+  }
+}
+/** 语音 */
+export interface ArrayMessageRecord extends Message {
+  type: 'record'
+  data: {
+    file: string
+    url?: string
+    cache?: string
+    proxy?: string
+    timeout?: string
+  }
+}
+/** 短视频 */
+export interface ArrayMessageVideo extends Message {
+  type: 'video'
+  data: {
+    file: string
+    url?: string
+    cache?: string
+    proxy?: string
+    timeout?: string
+  }
+}
+/** @ 某人 */
+export interface ArrayMessageAt extends Message {
+  type: 'at'
+  data: { qq: string | 'all' }
+}
+/** 猜拳魔法表情 */
+export interface ArrayMessageRps extends Message {
+  type: 'rps'
+  data: {}
+}
+/** 掷骰子魔法表情 */
+export interface ArrayMessageDice extends Message {
+  type: 'dice'
+  data: {}
+}
+/** 窗口抖动（戳一戳） */
+export interface ArrayMessageShake extends Message {
+  type: 'shake'
+  data: {}
+}
+/** 戳一戳 */
+export interface ArrayMessagePoke extends Message {
+  type: 'poke'
+  data: {
+    type: string
+    id: string
+    name: string
+  }
+}
+/** 匿名发消息 */
+export interface ArrayMessageAnonymous extends Message {
+  type: 'anonymous'
+  data: {}
+}
+/** 链接分享 */
+export interface ArrayMessageShare extends Message {
+  type: 'share'
+  data: {
+    url: string
+    title: string
+    content: string
+    image: string
+  }
+}
+/** 推荐好友 / 推荐群 */
+export interface ArrayMessageContact extends Message {
+  type: 'contact'
+  data: {
+    type: 'qq' | 'group'
+    id: string
+  }
+}
+/** 位置 */
+export interface ArrayMessageLocation extends Message {
+  type: 'location'
+  data: {
+    lat: string
+    lon: string
+    title: string
+    content: string
+  }
+}
+/** 音乐分享 */
+export interface ArrayMessageMusic extends Message {
+  type: 'music'
+  data: {
+    type: string
+    id: string
+  }
+}
+/** 音乐自定义分享 */
+export interface ArrayMessageMusicCust extends Message {
+  type: 'music'
+  data: {
+    type: string
+    url: string
+    audio: string
+    title: string
+    content?: string
+    image?: string
+  }
+}
+/** 回复 */
+export interface ArrayMessageReply extends Message {
+  type: 'reply'
+  data: { id: string }
+}
+/** 合并转发 */
+export interface ArrayMessageForward extends Message {
+  type: 'forward'
+  data: { id: string }
+}
+/** 合并转发节点 */
+export interface ArrayMessageNode extends Message {
+  type: 'node'
+  data: { id: string }
+}
+/** 
+ * 合并转发自定义节点
+ * 
+ * > 注意
+ * 
+ * > 接收时，此消息段不会直接出现在消息事件的 message 中，需通过 get_forward_msg API 获取。
+ */
+export interface ArrayMessageNodeCust extends Message {
+  type: 'node'
+  data: {
+    user_id: string
+    nickname: string
+    content: string | ArrayMessage
+  }
+}
+/** XML 消息 */
+export interface ArrayMessageXml extends Message {
+  type: 'xml'
+  data: { 'data': string }
+}
+/** JSON 消息 */
+export interface ArrayMessageJson extends Message {
+  type: 'json'
+  data: { 'data': string }
 }

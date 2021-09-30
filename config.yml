@@ -1,0 +1,18 @@
+server:
+  api-port: 16701
+  ws-port: 16700
+
+# 日志等级 debug | info
+log: debug
+
+admin:
+  - 1051641454
+
+# bot的基本信息
+bots:
+  - # QQ
+    id: 2532125165
+    # 接口地址
+    url: http://172.19.47.166:5700
+    # 接口的令牌 没有则不填
+    token: 

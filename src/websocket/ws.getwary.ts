@@ -1,10 +1,28 @@
 import { Logger } from "@nestjs/common";
 import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway } from "@nestjs/websockets";
+import { MessageService } from "src/service/message.service";
+import { MetaEventService } from "src/service/meta-event.service";
+import { NoticeService } from "src/service/notice.service";
+import { RequestService } from "src/service/request.service";
 import * as WebSocket from 'ws';
-import { PrivateMessageEventData, GroupMessageEventData, FriendAddNoticeEventData, FriendRecallNoticeEventData, GroupAdminNoticeEventData, GroupBanNoticeEventData, GroupDecreaseNoticeEventData, GroupIncreaseNoticeEventData, GroupRecallNoticeEventData, GroupUploadNoticeEventData, HonorNoticeEventData, LuckyKingNoticeEventData, PockNoticeEventData, FriendRequestEventData, GroupRequestEventData, HeartbeatMetaEventData, LifecycleMetaEventData } from "./ws";
+import * as path from 'path'
+import { accessSync, constants, readFileSync } from "fs"
+import * as yaml from 'js-yaml'
+import { LifecycleMetaEventData, HeartbeatMetaEventData, FriendRequestEventData, GroupRequestEventData, PrivateMessageEventData, GroupMessageEventData, GroupUploadNoticeEventData, GroupAdminNoticeEventData, GroupDecreaseNoticeEventData, GroupIncreaseNoticeEventData, GroupBanNoticeEventData, FriendAddNoticeEventData, GroupRecallNoticeEventData, FriendRecallNoticeEventData, PockNoticeEventData, LuckyKingNoticeEventData, HonorNoticeEventData } from "src";
 
-@WebSocketGateway(16700)
+// 加载配置文件
+getConfig()
+
+@WebSocketGateway(global.config.server['ws-port'])
 export class WsStartGateway {
+
+  constructor(
+    private metaEventService: MetaEventService,
+    private requestService: RequestService,
+    private messageService: MessageService,
+    private noticeService: NoticeService) {
+    Logger.log('The websocket runs on port :>> ' + global.config.server['ws-port'])
+  }
 
   /**
    * 处理生命周期事件
@@ -12,7 +30,7 @@ export class WsStartGateway {
    */
   @SubscribeMessage('meta_event')
   meatEvent(@MessageBody() data: LifecycleMetaEventData | HeartbeatMetaEventData): any {
-    Logger.debug('meta_event :>> ', data)
+    this.metaEventService[data.meta_event_type]?.(data as any)
   }
 
   /**
@@ -21,7 +39,7 @@ export class WsStartGateway {
    */
   @SubscribeMessage('request')
   request(@MessageBody() data: FriendRequestEventData | GroupRequestEventData): any {
-    Logger.debug('request :>> ', data)
+    this.requestService[data.request_type]?.(data as any)
   }
 
   /**
@@ -30,7 +48,7 @@ export class WsStartGateway {
    */
   @SubscribeMessage('message')
   message(@MessageBody() data: PrivateMessageEventData | GroupMessageEventData): any {
-    Logger.debug('message :>> ', data)
+    this.messageService[data.message_type]?.(data as any)
   }
 
   /**
@@ -42,7 +60,19 @@ export class WsStartGateway {
     GroupDecreaseNoticeEventData | GroupIncreaseNoticeEventData | GroupBanNoticeEventData |
     FriendAddNoticeEventData | GroupRecallNoticeEventData | FriendRecallNoticeEventData |
     PockNoticeEventData | LuckyKingNoticeEventData | HonorNoticeEventData): any {
-    Logger.debug('notice :>> ', data)
+    this.noticeService[data.notice_type]?.(data as any)
   }
 
+}
+
+function getConfig() {
+  let confPath = `${path.resolve(__dirname, '..', '..')}${path.sep}config.yml`
+  console.debug('config path:', confPath)
+  try {
+    accessSync(confPath, constants.R_OK | constants.W_OK)
+    global.config = yaml.load(readFileSync(confPath, 'utf8')) as any
+  } catch (e) {
+    console.error('get config err:', e)
+    process.exit(1)
+  }
 }

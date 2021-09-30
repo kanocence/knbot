@@ -3,7 +3,7 @@ import { WebSocketAdapter, INestApplicationContext, Logger } from '@nestjs/commo
 import { MessageMappingProperties } from '@nestjs/websockets';
 import { Observable, fromEvent, EMPTY } from 'rxjs';
 import { mergeMap, filter } from 'rxjs/operators';
-import { CommonEventData } from './ws';
+import { CommonEventData } from 'src';
 
 export class WsAdapter implements WebSocketAdapter {
 
