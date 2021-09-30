@@ -20,8 +20,6 @@ export class BotService {
       Logger.warn(`bot(${msg.self_id}) was not registered, msg:`, msg)
       return Promise.reject()
     }
-    console.log('resp :>> ', data)
-    return
     return await request({
       method: 'post',
       url: `${bot.url}/${type}${bot.token ? '?access_token=' + bot.token : ''}`,
