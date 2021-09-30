@@ -27,10 +27,15 @@ export interface Bot {
  * - validator: ()
  * - processor: ()
  */
- export interface Module {
+export interface Module {
   // type: EventName | EventName[]
   validator: (msg: any) => boolean
   processor: (msg: any, send: SendFunc) => void
+}
+
+export interface ModuleClass {
+  validator: (msg: any) => boolean
+  processor: (msg: any, send: any) => void
 }
 
 /** 发送指令给bot的方法 */
@@ -70,7 +75,7 @@ export interface CommonEventData {
  * |私聊消息|PrivateMessageEventData|
  * |群聊消息|GroupMessageEventData|
  */
- interface CommonMessageEventData extends CommonEventData {
+interface CommonMessageEventData extends CommonEventData {
   post_type: "message",
   /** 消息链 */
   message: Message[] | string,
@@ -359,7 +364,7 @@ export interface HeartbeatMetaEventData extends CommonMetaEventData {
  * 
  * [参考 OneBot v11 中的定义](https://github.com/botuniverse/onebot/blob/master/v11/specs/message/segment.md)
  */
- export interface Message {
+export interface Message {
   /** 其中 type 字段的类型为字符串，对应 CQ 码中的「功能名」 */
   type: 'text' | 'face' | 'image' | 'record' | 'video' | 'at' | 'rps' | 'dice' | 'shake' | 'poke' | 'anonymous' |
   'share' | 'contact' | 'location' | 'music' | 'reply' | 'forward' | 'node' | 'xml' | 'json'

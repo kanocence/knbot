@@ -14,7 +14,7 @@ export class BotService {
    * @param data api使用的参数
    * @param msg 消息原文对象
    */
-  async send(type: ApiType, data: any, msg: CommonEventData): Promise<AxiosResponse<any>> {
+  async send(type: ApiType, data: any, msg: CommonEventData | { self_id: number }): Promise<AxiosResponse<any>> {
     const { bots } = global.config
     const bot = bots.find((i: Bot) => i.id = msg.self_id)
 
@@ -22,8 +22,8 @@ export class BotService {
       this.logger.warn(`bot(${msg.self_id}) was not registered, msg:`, msg)
       return Promise.reject()
     }
-    console.log('resp :>> ', data)
-    return
+    // this.logger.debug('request data :>> ', data)
+    // return
     return await request({
       method: 'post',
       url: `${bot.url}/${type}${bot.token ? '?access_token=' + bot.token : ''}`,
