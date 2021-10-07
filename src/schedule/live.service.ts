@@ -6,9 +6,9 @@ import { request } from 'src/utils/request';
 import { BiliLiveTaskData } from './task';
 
 @Injectable()
-export class BiliLiveTasksService {
+export class BiliLiveTasks {
 
-  private readonly logger = new Logger(BiliLiveTasksService.name)
+  private readonly logger = new Logger(BiliLiveTasks.name)
   // 定时任务使用的数据
   private taskList: BiliLiveTaskData[] = []
 

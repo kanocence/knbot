@@ -1,10 +1,9 @@
 import { Logger } from "@nestjs/common";
-import { ConnectedSocket, MessageBody, SubscribeMessage, WebSocketGateway } from "@nestjs/websockets";
+import { MessageBody, SubscribeMessage, WebSocketGateway } from "@nestjs/websockets";
 import { MessageService } from "src/service/message.service";
 import { MetaEventService } from "src/service/meta-event.service";
 import { NoticeService } from "src/service/notice.service";
 import { RequestService } from "src/service/request.service";
-import * as WebSocket from 'ws';
 import * as path from 'path'
 import { accessSync, constants, readFileSync } from "fs"
 import * as yaml from 'js-yaml'

@@ -1,7 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common"
-import { send } from "process";
 import { CommonEventData, GroupMessageEventData, ModuleClass, PrivateMessageEventData } from "src";
-import { BiliLiveTasksService } from "src/schedule/live.service";
+import { BiliLiveTasks } from "src/schedule/live.service";
 import { BotService } from "src/service/bot.service";
 import { messageOp } from "src/utils/event";
 import { request } from "src/utils/request";
@@ -11,7 +10,7 @@ export class BiliLiveTaskModule implements ModuleClass {
 
   private logger = new Logger(BiliLiveTaskModule.name)
 
-  constructor(private biliLiveTaskService: BiliLiveTasksService,
+  constructor(private biliLiveTask: BiliLiveTasks,
     private readonly botService: BotService) { }
 
   validator(msg: CommonEventData): boolean {
@@ -39,7 +38,7 @@ export class BiliLiveTaskModule implements ModuleClass {
     let cmd = msg.raw_message.split(' ')
     if (cmd[1] === 'ls') {
       // 返回当前列表
-      reply = this.biliLiveTaskService.info(msg, msg.message_type === 'group' ? msg.group_id : msg.user_id)
+      reply = this.biliLiveTask.info(msg, msg.message_type === 'group' ? msg.group_id : msg.user_id)
     } else if (cmd[1] === 'ad') {
       if (cmd[2]) {
         await request({
@@ -47,7 +46,7 @@ export class BiliLiveTaskModule implements ModuleClass {
           method: 'get'
         }).then(async res => {
           if (res.data) {
-            await this.biliLiveTaskService.add(msg, parseInt(cmd[2]))
+            await this.biliLiveTask.add(msg, parseInt(cmd[2]))
               .then(res => { reply = res })
           } else {
             reply = 'No UID found: ' + cmd[2]
@@ -58,7 +57,7 @@ export class BiliLiveTaskModule implements ModuleClass {
       }
     } else if (cmd[1] === 'rm') {
       if (cmd[1]) {
-        reply = this.biliLiveTaskService.remove(msg, parseInt(cmd[2]))
+        reply = this.biliLiveTask.remove(msg, parseInt(cmd[2]))
       } else {
         reply = 'Unknown command'
       }
