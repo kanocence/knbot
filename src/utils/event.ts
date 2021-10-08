@@ -60,3 +60,40 @@ export function messageReg(msg: string | Message[], reg: RegExp) {
     .reduce((res, i) => res + (i as ArrayMessageText).data.text, '')
   return typeof msg === 'string' ? reg.test(msg) : reg.test(str)
 }
+
+/**
+ * 判断像个对象的内容是否完全相等
+ * @param object1 对象1
+ * @param object2 对象2
+ * @returns Boolean
+ */
+export function objectEquals(object1, object2) {
+  for (const propName in object1) {
+    if (object1.hasOwnProperty(propName) != object2.hasOwnProperty(propName)) {
+      return false
+    }
+    else if (typeof object1[propName] != typeof object2[propName]) {
+      return false
+    }
+  }
+  for (const propName in object2) {
+    if (object1.hasOwnProperty(propName) != object2.hasOwnProperty(propName)) {
+      return false
+    } else if (typeof object1[propName] != typeof object2[propName]) {
+      return false
+    }
+    if (!object1.hasOwnProperty(propName))
+      continue
+    if (object1[propName] instanceof Array && object2[propName] instanceof Array) {
+      if (!objectEquals(object1[propName], object2[propName]))
+        return false
+    } else if (object1[propName] instanceof Object && object2[propName] instanceof Object) {
+      if (!objectEquals(object1[propName], object2[propName]))
+        return false
+    }
+    else if (object1[propName] != object2[propName]) {
+      return false
+    }
+  }
+  return true
+}
