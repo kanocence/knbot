@@ -1,16 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { HeartbeatMetaEventData, LifecycleMetaEventData, Module } from 'src'
+import { HeartbeatMetaEventData, LifecycleMetaEventData, MeatEventModule } from 'src'
 
 @Injectable()
 export class MetaEventService {
 
   private readonly logger = new Logger(MetaEventService.name)
 
-  commonMethods: Module[] = []
-  lifecycleMethods: Module[] = []
-  heartbeatModules: Module[] = []
+  commonMethods: MeatEventModule[] = []
+  lifecycleMethods: MeatEventModule[] = []
+  heartbeatModules: MeatEventModule[] = []
 
-  on(module: Module, type?: MetaEventType | MetaEventType[]) {
+  on(module: MeatEventModule) {
+    const type = module.type
     if (typeof type === 'object') {
       type.forEach(i => this[i + 'Methods'].push(module))
     } else if (typeof type === 'string') {
@@ -21,12 +22,22 @@ export class MetaEventService {
   }
 
   lifecycle(data: LifecycleMetaEventData) {
+    this.commonMethods.forEach(i => {
+      if (i.validator(data)) {
+        i.processor(data)
+      }
+    })
 
+    this.lifecycleMethods.find(i => i.validator(data))?.processor(data)
   }
 
   heartbeat(data: HeartbeatMetaEventData) {
+    this.commonMethods.forEach(i => {
+      if (i.validator(data)) {
+        i.processor(data)
+      }
+    })
 
+    this.heartbeatModules.find(i => i.validator(data))?.processor(data)
   }
 }
-
-export type MetaEventType = 'lifecycle' | 'heartbeat'

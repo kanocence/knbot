@@ -1,16 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { FriendRequestEventData, GroupRequestEventData, Module } from 'src'
+import { FriendRequestEventData, GroupRequestEventData, RequestModule } from 'src'
 
 @Injectable()
 export class RequestService {
 
   private readonly logger = new Logger(RequestService.name)
 
-  commonMethods: Module[] = []
-  friendMethods: Module[] = []
-  groupMethods: Module[] = []
+  commonMethods: RequestModule[] = []
+  friendMethods: RequestModule[] = []
+  groupMethods: RequestModule[] = []
 
-  on(module: Module, type?: NoticeType | NoticeType[]) {
+  on(module: RequestModule) {
+    const type = module.type
     if (typeof type === 'object') {
       type.forEach(i => this[i + 'Methods'].push(module))
     } else if (typeof type === 'string') {
@@ -25,11 +26,23 @@ export class RequestService {
   }
 
   friend(data: FriendRequestEventData) {
+    this.commonMethods.forEach(i => {
+      if (i.validator(data)) {
+        i.processor(data)
+      }
+    })
 
+    this.friendMethods.find(i => i.validator(data))?.processor(data)
   }
 
   group(data: GroupRequestEventData) {
+    this.commonMethods.forEach(i => {
+      if (i.validator(data)) {
+        i.processor(data)
+      }
+    })
 
+    this.groupMethods.find(i => i.validator(data))?.processor(data)
   }
 }
 
