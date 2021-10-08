@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { GroupMessageEventData, Module, PrivateMessageEventData } from 'src';
+import { GroupMessageEventData, MessageModule, PrivateMessageEventData } from 'src';
 import { BotService } from './bot.service';
 
 @Injectable()
@@ -7,13 +7,14 @@ export class MessageService {
 
   private readonly logger = new Logger(MessageService.name)
 
-  commonMethods: Module[] = []
-  privateMethods: Module[] = []
-  groupMethods: Module[] = []
+  commonMethods: MessageModule[] = []
+  privateMethods: MessageModule[] = []
+  groupMethods: MessageModule[] = []
 
   constructor(private botService: BotService) { }
 
-  on(module: Module, type?: MessageType | MessageType[]) {
+  on(module: MessageModule) {
+    const type = module.type
     if (typeof type === 'object') {
       type.forEach(i => this[i + 'Methods'].push(module))
     } else if (typeof type === 'string') {
@@ -26,22 +27,20 @@ export class MessageService {
   private(data: PrivateMessageEventData) {
     this.commonMethods.forEach(i => {
       if (i.validator(data)) {
-        i.processor(data, this.botService.send)
+        i.processor(data)
       }
     })
 
-    this.privateMethods.find(i => i.validator(data))?.processor(data, this.botService.send)
+    this.privateMethods.find(i => i.validator(data))?.processor(data)
   }
 
   group(data: GroupMessageEventData) {
     this.commonMethods.forEach(i => {
       if (i.validator(data)) {
-        i.processor(data, this.botService.send)
+        i.processor(data)
       }
     })
 
-    this.groupMethods.find(i => i.validator(data))?.processor(data, this.botService.send)
+    this.groupMethods.find(i => i.validator(data))?.processor(data)
   }
 }
-
-export type MessageType = 'private' | 'group'

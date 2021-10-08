@@ -35,11 +35,32 @@ export interface Module {
 
 export interface ModuleClass {
   validator: (msg: any) => boolean
-  processor: (msg: any, send: any) => void
+  processor: (msg: any) => void
 }
 
-/** 发送指令给bot的方法 */
-export type SendFunc = (type: ApiType, resp: any, msg: CommonEventData) => Promise<AxiosResponse<any>>
+export interface MessageModule extends ModuleClass {
+  /** 处理的消息类型，缺省时为通用模块 */
+  type?: MessageType | MessageType[]
+}
+
+export interface MeatEventModule extends ModuleClass {
+  type?: MeatEventType | MeatEventType[]
+}
+
+export interface RequestModule extends ModuleClass {
+  type?: RequestType | RequestType[]
+}
+
+export interface NoticeModule extends ModuleClass {
+  type?: NoticeType | NoticeType[]
+}
+
+export type PostType = "meta_event" | "request" | "message" | "notice"
+export type MessageType = 'private' | 'group'
+export type MeatEventType = "lifecycle" | "heartbeat"
+export type RequestType = "friend" | "group"
+export type NoticeType = "group_upload" | "group_admin" | "group_decrease" | "group_increase" | "group_ban" |
+  "friend_add" | "group_recall" | "friend_recall" | "notify"
 
 /** 公共事件对象 */
 export interface CommonEventData {
@@ -48,16 +69,15 @@ export interface CommonEventData {
   /** 事件发生的时间戳 */
   time: number,
   /** 上报类型 */
-  post_type: "meta_event" | "request" | "message" | "notice",
+  post_type: PostType,
   /** 元事件 */
-  meta_event_type?: "lifecycle" | "heartbeat",
+  meta_event_type?: MeatEventType,
   /** 请求事件 */
-  request_type?: "friend" | "group",
+  request_type?: RequestType,
   /** 消息事件 */
-  message_type?: "private" | "group",
+  message_type?: MessageType,
   /** 通知事件 */
-  notice_type?: "group_upload" | "group_admin" | "group_decrease" | "group_increase" | "group_ban" |
-  "friend_add" | "group_recall" | "friend_recall" | "notify",
+  notice_type?: NoticeType,
   /** 消息子类型 */
   sub_type?: string,
 }

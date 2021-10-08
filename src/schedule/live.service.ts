@@ -6,9 +6,9 @@ import { request } from 'src/utils/request';
 import { BiliLiveTaskData } from './task';
 
 @Injectable()
-export class BiliLiveTasks {
+export class BiliLiveTask {
 
-  private readonly logger = new Logger(BiliLiveTasks.name)
+  private readonly logger = new Logger(BiliLiveTask.name)
   // 定时任务使用的数据
   private taskList: BiliLiveTaskData[] = []
 
@@ -77,8 +77,10 @@ export class BiliLiveTasks {
    */
   async add(msg: GroupMessageEventData | PrivateMessageEventData, uid: number): Promise<string> {
     const task: BiliLiveTaskData = this.taskList.find(i => i.uid === uid)
+    let name = ''
     // This uid-task exists
     if (task) {
+      name = task.name
       const bot = task.bot.find(i => i.id === msg.self_id)
       if (bot) {
         msg.message_type === 'group' ?
@@ -98,6 +100,7 @@ export class BiliLiveTasks {
           return 'No user found: ' + uid
         }
         this.logger.debug('get user info by uid: ' + uid)
+        name = res.data.name
         this.taskList.push({
           uid: res.data.mid,
           name: res.data.name,
@@ -110,7 +113,7 @@ export class BiliLiveTasks {
         })
       })
     }
-    return 'Subscription added: ' + uid
+    return `Subscription added: ${name}(${uid})`
   }
 
   /**
@@ -133,7 +136,9 @@ export class BiliLiveTasks {
    */
   remove(msg: GroupMessageEventData | PrivateMessageEventData, uid: number): string {
     const task: BiliLiveTaskData = this.taskList.find(i => i.uid === uid)
+    let name = ''
     if (task) {
+      name = task.name
       const bot = task.bot.find(i => i.id === msg.self_id)
       if (bot) {
         // remove by msg.userId / msg.groupId
@@ -153,7 +158,7 @@ export class BiliLiveTasks {
           this.taskList.splice(this.taskList.indexOf(task), 1)
           this.logger.debug('remove empty task: ' + uid)
         }
-        return `Unsubscribed: ${uid}`
+        return `Unsubscribed: ${name}(${uid})`
       } else {
         return 'No subscription found'
       }

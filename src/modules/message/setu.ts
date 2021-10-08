@@ -1,24 +1,31 @@
 import { Logger } from "@nestjs/common"
 import { request } from "src/utils/request"
 import { AxiosResponse } from "axios"
-import { GroupMessageEventData, Module, SendFunc } from "src"
+import { GroupMessageEventData, MessageModule } from "src"
 import { messageOp } from "src/utils/event"
+import { BotService } from "src/service/bot.service"
 
-const setu: Module = {
+export class SetuModule implements MessageModule {
+
+  type: 'group'
+
+  private logger = new Logger(SetuModule.name)
+
+  constructor(private readonly botService: BotService) { }
 
   validator(msg: GroupMessageEventData): boolean {
     return messageOp(msg.message, '来张色图')
-  },
+  }
 
-  processor(msg: GroupMessageEventData, send: SendFunc): void {
+  processor(msg: GroupMessageEventData): void {
     // 封装后的axios, 发送xhr请求
     request({
       method: 'get',
       url: "https://api.lolicon.app/setu/v2"
     }).then((res: AxiosResponse) => {
       if (res.data.length > 0) {
-        Logger.debug('setu res :>> ', res)
-        send('send_group_msg',
+        this.logger.debug('setu res :>> ', res)
+        this.botService.send('send_group_msg',
           {
             group_id: msg.group_id,
             message: res.data
@@ -30,10 +37,8 @@ const setu: Module = {
           msg)
       }
     }).catch((error: any) => {
-      Logger.error(error)
-      send('send_group_msg', { group_id: msg.group_id, message: '查询出错' }, msg)
+      this.logger.error(error)
+      this.botService.send('send_group_msg', { group_id: msg.group_id, message: '查询出错' }, msg)
     })
   }
 }
-
-export default setu

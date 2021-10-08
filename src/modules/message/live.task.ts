@@ -1,23 +1,25 @@
 import { Injectable, Logger } from "@nestjs/common"
-import { CommonEventData, GroupMessageEventData, ModuleClass, PrivateMessageEventData } from "src";
-import { BiliLiveTasks } from "src/schedule/live.service";
+import { CommonEventData, GroupMessageEventData, MessageModule, PrivateMessageEventData } from "src";
+import { BiliLiveTask } from "src/schedule/live.service";
 import { BotService } from "src/service/bot.service";
 import { messageOp } from "src/utils/event";
 import { request } from "src/utils/request";
 
 @Injectable()
-export class BiliLiveTaskModule implements ModuleClass {
+export class BiliLiveTaskModule implements MessageModule {
+
+  type: ['private', 'group']
 
   private logger = new Logger(BiliLiveTaskModule.name)
 
-  constructor(private biliLiveTask: BiliLiveTasks,
+  constructor(private biliLiveTask: BiliLiveTask,
     private readonly botService: BotService) { }
 
   validator(msg: CommonEventData): boolean {
     return msg.post_type === 'message' && messageOp((msg as GroupMessageEventData).message, 'blj')
   }
 
-  async processor(msg: GroupMessageEventData | PrivateMessageEventData, send: any) {
+  async processor(msg: GroupMessageEventData | PrivateMessageEventData) {
     await this.handleEvent(msg).then(res => {
       this.botService.send('send_msg',
         {
@@ -29,13 +31,13 @@ export class BiliLiveTaskModule implements ModuleClass {
   }
 
   /**
- * 判断命令类型
- * @param msg msg
- * @returns reply: string
- */
+   * 判断命令类型
+   * @param msg msg
+   * @returns reply: string
+   */
   async handleEvent(msg: GroupMessageEventData | PrivateMessageEventData) {
     let reply = `bilibili-live-job\n- ls 订阅列表\n- ad <UID> 添加订阅\n- rm <UID> 取消订阅\n- help 帮助\n- start(admin)\n- stop(admin)`
-    let cmd = msg.raw_message.split(' ')
+    let cmd = (msg.message as string).split(' ')
     if (cmd[1] === 'ls') {
       // 返回当前列表
       reply = this.biliLiveTask.info(msg, msg.message_type === 'group' ? msg.group_id : msg.user_id)
