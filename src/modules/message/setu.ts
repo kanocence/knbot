@@ -1,10 +1,11 @@
-import { Logger } from "@nestjs/common"
+import { Injectable, Logger } from "@nestjs/common"
 import { request } from "src/utils/request"
 import { AxiosResponse } from "axios"
 import { GroupMessageEventData, MessageModule } from "src"
 import { messageOp } from "src/utils/event"
 import { BotService } from "src/service/bot.service"
 
+@Injectable()
 export class SetuModule implements MessageModule {
 
   type: 'group'

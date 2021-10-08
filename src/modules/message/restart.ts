@@ -1,8 +1,9 @@
-import { Logger } from "@nestjs/common"
+import { Injectable, Logger } from "@nestjs/common"
 import { CommonEventData, GroupMessageEventData, MessageModule, PrivateMessageEventData } from "src"
 import { BotService } from "src/service/bot.service"
 import { messageEq } from "src/utils/event"
 
+@Injectable()
 export class RestartModule implements MessageModule {
 
   type: ['private', 'group']
