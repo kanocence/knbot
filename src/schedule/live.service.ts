@@ -61,14 +61,47 @@ export class BiliLiveTask {
               await this.botService.send('send_group_msg',
                 {
                   group_id: g.id,
-                  message: `${g.at ? '[CQ:at,qq=all]' : ''}\n${item.name} 正在直播\n${data.title}\n[CQ:image,file=${data.keyframe}]\nhttps://live.bilibili.com/${data.room_id}`
+                  message: [
+                    g.at ? {
+                      type: "at",
+                      data: { qq: "all" }
+                    } : {},
+                    {
+                      type: "text",
+                      data: { text: `\n${item.name}正在直播:\n${data.title}` }
+                    },
+                    {
+                      type: "image",
+                      data: { file: data.keyframe }
+                    },
+                    {
+                      type: "text",
+                      data: { text: `https://live.bilibili.com/${data.room_id}` }
+                    }
+                  ]
                 },
                 { self_id: i.id })
             })
             // 通知所有订阅的用户
             i.user?.forEach(async userId => {
               await this.botService.send('send_private_msg',
-                { user_id: userId, message: `${item.name}(${item.uid}) 正在直播\n${data.title}\n[CQ:image,file=${data.keyframe}]\nhttps://live.bilibili.com/${data.room_id}` },
+                {
+                  user_id: userId,
+                  message: [
+                    {
+                      type: "text",
+                      data: { text: `\n${item.name}正在直播:\n${data.title}` }
+                    },
+                    {
+                      type: "image",
+                      data: { file: data.keyframe }
+                    },
+                    {
+                      type: "text",
+                      data: { text: `https://live.bilibili.com/${data.room_id}` }
+                    }
+                  ]
+                },
                 { self_id: i.id })
             })
           })
