@@ -1,4 +1,4 @@
-import { BiliLiveTask } from "./live.service";
+import { BiliLiveTask } from "./live.task";
 
 /**
  * 导出的所有定时任务

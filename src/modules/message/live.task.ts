@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common"
 import { CommonEventData, GroupMessageEventData, MessageModule, PrivateMessageEventData } from "src";
-import { BiliLiveTask } from "src/schedule/live.service";
+import { BiliLiveTask } from "src/schedule/live.task";
 import { BotService } from "src/service/bot.service";
 import { messageOp } from "src/utils/event";
 import { request } from "src/utils/request";
