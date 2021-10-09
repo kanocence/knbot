@@ -4,16 +4,26 @@ import { CommonEventData, GroupMessageEventData, PrivateMessageEventData } from 
 import { BotService } from 'src/service/bot.service';
 import { request } from 'src/utils/request';
 import { BiliLiveTaskData } from './task';
+import * as path from 'path'
+import * as fs from 'fs'
 
 @Injectable()
 export class BiliLiveTask {
 
   private readonly logger = new Logger(BiliLiveTask.name)
+
+  private configFileName = 'bilibili-live-task-config.json'
+
   // 定时任务使用的数据
   private taskList: BiliLiveTaskData[] = []
 
   constructor(private readonly botService: BotService) {
     this.logger.log('create bilibili live task')
+    // 读取配置文件
+    let config = this.getConfig()
+    if (config) {
+      this.taskList = config
+    }
   }
 
   /**
@@ -113,6 +123,7 @@ export class BiliLiveTask {
         })
       })
     }
+    this.setConfig()
     return `Subscription added: ${name}(${uid})`
   }
 
@@ -158,6 +169,7 @@ export class BiliLiveTask {
           this.taskList.splice(this.taskList.indexOf(task), 1)
           this.logger.debug('remove empty task: ' + uid)
         }
+        this.setConfig()
         return `Unsubscribed: ${name}(${uid})`
       } else {
         return 'No subscription found'
@@ -182,6 +194,29 @@ export class BiliLiveTask {
       res += `- ${i.name}(${i.uid})\n`
     })
     return res
+  }
+
+  /**
+   * 读取配置文件
+   * @returns json object
+   */
+  getConfig() {
+    let confPath = `${path.resolve(__dirname, '..')}${path.sep}config${path.sep}${this.configFileName}`
+    this.logger.debug('config path:', confPath)
+    try {
+      return JSON.parse(fs.readFileSync(confPath).toString())
+    } catch (e) {
+      this.logger.error(`get ${this.configFileName} error`)
+      this.logger.debug(e)
+    }
+  }
+
+  /**
+   * 更新配置文件
+   */
+  setConfig() {
+    let confPath = `${path.resolve(__dirname, '..')}${path.sep}config${path.sep}${this.configFileName}`
+    fs.writeFile(confPath, JSON.stringify(this.taskList), () => this.logger.log(`update ${this.configFileName}`))
   }
 
 }
