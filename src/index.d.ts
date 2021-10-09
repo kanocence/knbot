@@ -21,17 +21,6 @@ export interface Bot {
   online?: boolean
 }
 
-/**
- * bot的事件处理模块
- * - ~~type: EventName | []~~
- * - validator: ()
- * - processor: ()
- */
-export interface Module {
-  // type: EventName | EventName[]
-  validator: (msg: any) => boolean
-  processor: (msg: any, send: SendFunc) => void
-}
 
 export interface ModuleClass {
   validator: (msg: any) => boolean
