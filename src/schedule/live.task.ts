@@ -249,7 +249,7 @@ export class BiliLiveTask {
    */
   setConfig() {
     let confPath = `${path.resolve(__dirname, '..')}${path.sep}config${path.sep}${this.configFileName}`
-    fs.writeFile(confPath, JSON.stringify(this.taskList), () => this.logger.log(`update ${this.configFileName}`))
+    fs.writeFile(confPath, JSON.stringify(this.taskList), () => this.logger.debug(`update ${this.configFileName}`))
   }
 
 }
