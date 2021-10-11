@@ -33,7 +33,7 @@ export type BiliSpaceTaskData = {
   dynamic_id: number
   /** 字符串形式的动态号 */
   dynamic_id_str: string
-  /** 发布时间戳(秒，需要补充三个0) */
+  /** 发布时间戳(秒) */
   timestamp: number
   /** bot信息 */
   bot: {

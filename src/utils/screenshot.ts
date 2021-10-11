@@ -2,11 +2,10 @@ import { chromium } from 'playwright'
 
 /**
  * 生成B站动态图片
- * @param uid user id
  * @param did dynamic id
  * @returns base64 string
  */
-export async function prtScBi(uid: number, did: number | string) {
+export async function prtScBi(did: string) {
   const browser = await chromium.launch()
 
   const page = await browser.newPage({

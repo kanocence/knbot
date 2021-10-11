@@ -28,6 +28,10 @@ export class BiliSpaceTask {
     }
   }
 
+  @Cron('10/15 * * * * *')
+  asynConfig() {
+    this.setConfig()
+  }
 
   /**
    * 定时任务 每分钟的第5秒开始，每隔15秒执行一次
@@ -56,17 +60,17 @@ export class BiliSpaceTask {
            * - 按时间戳升序排序（新的靠后）
            */
           let newDynamics = dynamicArr
-            .filter(i => i.desc.timestamp * 1000 > (task.timestamp ?? new Date().getTime() - 60000))
+            .filter(i => i.desc.timestamp > task.timestamp)
             .sort((a, b) => a.desc.timestamp - b.desc.timestamp)
 
           let len = newDynamics.length
           if (len > 0) {
             // 更新缓存
             task.dynamic_id = dynamicArr[len - 1].desc.dynamic_id
-            task.dynamic_id_str = dynamicArr[len - 1].desc.pre_dy_id_str
+            task.dynamic_id_str = dynamicArr[len - 1].desc.dynamic_id_str
             task.timestamp = dynamicArr[len - 1].desc.timestamp
-            newDynamics.forEach(i => {
-              this.sendNotification(i.desc.uid, i.desc.dynamic_id, task)
+            newDynamics.forEach(async i => {
+              await this.sendNotification(i.desc.dynamic_id_str, task)
             })
           }
         }
@@ -76,12 +80,11 @@ export class BiliSpaceTask {
 
   /**
    * 发送截图
-   * @param uid 动态所属的用户
    * @param did 动态的id
    * @param task 任务项
    */
-  async sendNotification(uid: number, did: number, task: BiliSpaceTaskData) {
-    await prtScBi(uid, did).then(base64 => {
+  async sendNotification(did: string, task: BiliSpaceTaskData) {
+    await prtScBi(did).then(base64 => {
       task.bot.forEach(bot => {
         bot.group?.forEach(group_id => {
           this.botService.send('send_group_msg',
@@ -117,7 +120,7 @@ export class BiliSpaceTask {
    */
   setConfig() {
     let confPath = `${path.resolve(__dirname, '..')}${path.sep}config${path.sep}${this.configFileName}`
-    fs.writeFile(confPath, JSON.stringify(this.taskList), () => this.logger.log(`update ${this.configFileName}`))
+    fs.writeFile(confPath, JSON.stringify(this.taskList), () => this.logger.debug(`update ${this.configFileName}`))
   }
 
   /**
@@ -184,7 +187,7 @@ export class BiliSpaceTask {
         this.taskList.push({
           uid: res.data.mid,
           name: res.data.name,
-          timestamp: new Date().getTime(),
+          timestamp: new Date().getTime() / 1000,
           dynamic_id: undefined,
           dynamic_id_str: undefined,
           bot: [{
