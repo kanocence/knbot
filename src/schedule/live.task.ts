@@ -157,7 +157,7 @@ export class BiliLiveTask {
       })
     }
     this.setConfig()
-    return `Subscription added: ${name}(${uid})`
+    return `Live subscription added: ${name}(${uid})`
   }
 
   /**
@@ -205,7 +205,7 @@ export class BiliLiveTask {
         this.setConfig()
         return `Unsubscribed: ${name}(${uid})`
       } else {
-        return 'No subscription found'
+        return 'No live subscription found'
       }
     } else {
       return 'No UID found'
