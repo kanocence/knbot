@@ -235,7 +235,7 @@ export class BiliLiveTask {
    */
   getConfig() {
     let confPath = `${path.resolve(__dirname, '..')}${path.sep}config${path.sep}${this.configFileName}`
-    this.logger.debug('config path:', confPath)
+    this.logger.debug('config path:' + confPath)
     try {
       return JSON.parse(fs.readFileSync(confPath).toString())
     } catch (e) {
