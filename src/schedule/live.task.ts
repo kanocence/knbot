@@ -54,6 +54,8 @@ export class BiliLiveTask {
         if (data?.live_status === 1 && !item.flag) {
           item.flag = true
           item.name = data.uname
+          // 记录flag
+          this.setConfig()
           // 通知所有bot
           item.bot.forEach(i => {
             // 通知所有订阅的群
@@ -157,7 +159,7 @@ export class BiliLiveTask {
       })
     }
     this.setConfig()
-    return `Live subscription added: ${name}(${uid})`
+    return `blt added: ${name}(${uid})`
   }
 
   /**
@@ -203,7 +205,7 @@ export class BiliLiveTask {
           this.logger.debug('remove empty task: ' + uid)
         }
         this.setConfig()
-        return `Unsubscribed: ${name}(${uid})`
+        return `blt unsubscribed: ${name}(${uid})`
       } else {
         return 'No live subscription found'
       }

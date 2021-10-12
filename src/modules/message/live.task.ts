@@ -36,7 +36,7 @@ export class BiliLiveTaskModule implements MessageModule {
    * @returns reply: string
    */
   async handleEvent(msg: GroupMessageEventData | PrivateMessageEventData) {
-    let reply = `bilibili-live-task\n- ls 订阅列表\n- ad <UID> 添加订阅\n- rm <UID> 取消订阅\n- help 帮助\n- start(admin)\n- stop(admin)`
+    let reply = `bilibili-live-task\n- ls 订阅列表\n- ad <UID> 添加订阅\n- rm <UID> 取消订阅\n- help 帮助`
     let cmd = (msg.message as string).split(' ')
     if (cmd[1] === 'ls') {
       // 返回当前列表
