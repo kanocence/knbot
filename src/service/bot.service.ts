@@ -29,10 +29,13 @@ export class BotService {
       url: `${bot.url}/${type}${bot.token ? '?access_token=' + bot.token : ''}`,
       data: data
     }).then(res => {
-      this.logger.debug('call bot success')
+      this.logger.debug('call bot success ' + msg.self_id)
+      if (res.status != 'ok') {
+        this.logger.error(res)
+      }
       return res
     }).catch(err => {
-      this.logger.error('call bot reject')
+      this.logger.error('call bot reject ' + msg.self_id)
       return Promise.reject(err)
     })
   }
