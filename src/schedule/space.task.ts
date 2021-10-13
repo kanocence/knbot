@@ -88,7 +88,7 @@ export class BiliSpaceTask {
       task.bot.forEach(bot => {
         bot.group?.forEach(group_id => {
           this.botService.send('send_group_msg',
-            { group_id: group_id, message: { type: 'image', data: { file: base64 } } },
+            { group_id: group_id.id, message: { type: 'image', data: { file: base64 } } },
             { self_id: bot.id })
         })
         bot.user?.forEach(user_id => {
@@ -199,7 +199,7 @@ export class BiliSpaceTask {
       })
     }
     this.setConfig()
-    return `Space subscription added: ${name}(${uid})`
+    return `bst added: ${name}(${uid})`
   }
 
   /**
@@ -233,7 +233,7 @@ export class BiliSpaceTask {
           this.logger.debug('remove empty task: ' + uid)
         }
         this.setConfig()
-        return `Unsubscribed: ${name}(${uid})`
+        return `bst unsubscribed: ${name}(${uid})`
       } else {
         return 'No space subscription found'
       }
