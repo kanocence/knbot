@@ -44,7 +44,7 @@ export class BiliLiveTask {
       method: 'post',
       data: { uids: uids }
     }).then(res => {
-      this.logger.debug(`request get_status_info_by_uids, total: ${uids.length} ${JSON.stringify(uids)}`)
+      this.logger.verbose(`request get_status_info_by_uids, total: ${uids.length} ${JSON.stringify(uids)}`)
       if (res.code != 0) {
         this.logger.error('get_status_info_by_uids error' + res.message)
         return
