@@ -338,8 +338,8 @@ export interface GroupRequestEventData extends CommonRequestEventData {
  * 
  * |event|interface|
  * |--|--|
- * |加好友请求|FriendRequestEventData|
- * |加群请求／邀请|GroupRequestEventData|
+ * |生命周期|LifecycleMetaEventData|
+ * |心跳|HeartbeatMetaEventData|
  */
 interface CommonMetaEventData extends CommonEventData {
   post_type: 'meta_event'
