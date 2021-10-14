@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common"
-import { CommonMetaEventData, MessageModule } from "src"
+import { CommonMetaEventData, MeatEventModule } from "src"
 import { BotService } from "src/service/bot.service"
 
 /** 上线时通知 */
 @Injectable()
-export class LoginModule implements MessageModule {
+export class LoginModule implements MeatEventModule {
 
-  type: 'group'
+  type: 'lifecycle'
 
   constructor(private readonly botService: BotService) { }
 
