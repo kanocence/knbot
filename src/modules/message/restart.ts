@@ -13,7 +13,7 @@ export class RestartModule implements MessageModule {
   constructor(private readonly botService: BotService) { }
 
   validator(msg: GroupMessageEventData | PrivateMessageEventData): boolean {
-    return msg.user_id == global.config.admin && messageEq(msg.message, 'bot restart')
+    return (global.config.admin as any[]).includes(msg.user_id) && messageEq(msg.message, 'bot restart')
   }
 
   processor(msg: CommonEventData): void {
