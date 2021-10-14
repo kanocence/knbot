@@ -7,6 +7,7 @@
 - restart
 - hello
 - repeat
+- setu
 
 ## feature
 
