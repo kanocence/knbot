@@ -1,5 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common"
-import { Cron } from "@nestjs/schedule"
+import { Cron, Interval } from "@nestjs/schedule"
 import { BotService } from "src/service/bot.service"
 import { request } from "src/utils/request"
 import { prtScBi } from "src/utils/screenshot"
@@ -20,61 +20,70 @@ export class BiliSpaceTask {
   private taskList: BiliSpaceTaskData[] = []
 
   constructor(private readonly botService: BotService) {
-    this.logger.log('create bilibili space task')
     // 读取配置文件
     let config = this.getConfig()
     if (config) {
       this.taskList = config
     }
+    this.logger.log('create bilibili space task, length: ' + this.taskList.length)
   }
 
-  @Cron('10/15 * * * * *')
-  asynConfig() {
+  @Interval(60000)
+  update() {
     this.setConfig()
   }
 
   /**
-   * 定时任务 每分钟的第5秒开始，每隔15秒执行一次
+   * 定时任务 每2秒执行一次，如果一分钟执行不完则增加每次的执行个数
    * @returns 
    */
-  @Cron('5/15 * * * * *')
-  async handleCron() {
-    if (this.taskList.length === 0) {
-      return
+  @Interval(3000)
+  async handleInterval() {
+    let n = Math.ceil(this.taskList.length / 20)
+    while (n >= 1) {
+      let task: BiliSpaceTaskData = this.taskList.shift()
+      this.taskList.push(task)
+      this.handler(task)
+      n--
     }
+  }
 
-    this.taskList.forEach(async (task: BiliSpaceTaskData) => {
-      await request({
-        // need_top = 0 包含置顶
-        url: `https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history?host_uid=${task.uid}&need_top=0`,
-        method: 'get',
-      }).then((res: SpaceApiResponse) => {
-        if (res.code === 0 && res.data?.cards?.length > 0) {
-          // 取最近的一条
-          let dynamicArr = res.data.cards
-          /**
-           * 筛选出需要通知的:
-           * 
-           * - 时间戳大于上一次缓存的时间戳
-           * - 无缓存时，时间戳在最近一分钟内的
-           * - 按时间戳升序排序（新的靠后）
-           */
-          let newDynamics = dynamicArr
-            .filter(i => i.desc.timestamp > task.timestamp)
-            .sort((a, b) => a.desc.timestamp - b.desc.timestamp)
+  async handler(task: BiliSpaceTaskData) {
+    this.logger.verbose('query space: ' + task.uid)
+    await request({
+      // need_top = 0 包含置顶
+      url: `https://api.vc.bilibili.com/dynamic_svr/v1/dynamic_svr/space_history?host_uid=${task.uid}&need_top=0`,
+      method: 'get',
+    }).then((res: SpaceApiResponse) => {
+      if (res.code === 0 && res.data?.cards?.length > 0) {
+        // 取最近的一条
+        let dynamicArr = res.data.cards
+        /**
+         * 筛选出需要通知的:
+         * 
+         * - 时间戳大于上一次缓存的时间戳
+         * - 按时间戳升序排序（新的靠后）
+         */
+        let newDynamics = dynamicArr
+          .filter(i => i.desc.timestamp > task.timestamp)
+          .sort((a, b) => a.desc.timestamp - b.desc.timestamp)
 
-          let len = newDynamics.length
-          if (len > 0) {
-            // 更新缓存
-            task.dynamic_id = dynamicArr[len - 1].desc.dynamic_id
-            task.dynamic_id_str = dynamicArr[len - 1].desc.dynamic_id_str
-            task.timestamp = dynamicArr[len - 1].desc.timestamp
-            newDynamics.forEach(async i => {
-              await this.sendNotification(i.desc.dynamic_id_str, task)
-            })
-          }
+        let len = newDynamics.length
+        if (len > 0) {
+          // 更新缓存
+          task.dynamic_id = dynamicArr[len - 1].desc.dynamic_id
+          task.dynamic_id_str = dynamicArr[len - 1].desc.dynamic_id_str
+          task.timestamp = dynamicArr[len - 1].desc.timestamp
+          newDynamics.forEach(async i => {
+            await this.sendNotification(i.desc.dynamic_id_str, task)
+          })
         }
-      })
+      }
+    }).finally(() => {
+      let now = new Date().getTime() / 1000
+      if (task.timestamp < now) {
+        task.timestamp = now
+      }
     })
   }
 
@@ -120,7 +129,7 @@ export class BiliSpaceTask {
    */
   setConfig() {
     let confPath = `${path.resolve(__dirname, '..')}${path.sep}config${path.sep}${this.configFileName}`
-    fs.writeFile(confPath, JSON.stringify(this.taskList), () => this.logger.debug(`update ${this.configFileName}`))
+    fs.writeFile(confPath, JSON.stringify(this.taskList), () => this.logger.verbose(`update ${this.configFileName}`))
   }
 
   /**
