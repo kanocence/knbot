@@ -14,9 +14,12 @@ RUN npm install
 
 # 可以更换国内apt源
 
-#安装中文字体
+# 安装中文字体
+# 参考https://blog.llcat.tech/2018/12/03/add-zh-CN-locales-and-fonts-in-docker-images/
 RUN apt-get update \ 
   && apt-get install -y locales \
+  # 安装emoji
+  # && apt-get install ttf-ancient-fonts \
   && sed -ie 's/# zh_CN.UTF-8 UTF-8/zh_CN.UTF-8 UTF-8/g' /etc/locale.gen \
   && locale-gen \
   && mkdir /usr/share/fonts/myfont/
