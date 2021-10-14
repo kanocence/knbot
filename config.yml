@@ -2,8 +2,13 @@ server:
   api-port: 16701
   ws-port: 16700
 
-# 日志等级 debug | info
-log: debug
+# 日志等级
+log:
+  - debug
+  - error
+  - warn
+  - log
+  # - verbose
 
 admin:
   - 1051641454
