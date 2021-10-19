@@ -1,5 +1,5 @@
 import { Logger } from '@nestjs/common'
-import { chromium } from 'playwright'
+import * as puppeteer from 'puppeteer'
 
 const logger = new Logger('ScreenShot')
 
@@ -10,19 +10,23 @@ const logger = new Logger('ScreenShot')
  */
 export async function prtScBi(did: string) {
   try {
-    const browser = await chromium.launch()
+    const url = `https://t.bilibili.com/${did}`
 
-    const page = await browser.newPage({
-      deviceScaleFactor: 2
+    let browser = await puppeteer.launch({
+      defaultViewport: {
+        deviceScaleFactor: 2,
+        width: 2120,
+        height: 1080
+      },
+      headless: true,
+      args: [
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage"
+      ]
     })
-
-    await page.goto(`https://t.bilibili.com/${did}`)
-
-    // 设置分辨率
-    page.setViewportSize({
-      "width": 2120,
-      "height": 1080
-    })
+    const page = await browser.newPage()
+    await page.goto(url)
 
     // 等待 5s 加载
     await page.waitForTimeout(5000)
@@ -33,13 +37,13 @@ export async function prtScBi(did: string) {
     const bar_bound = await bar.boundingBox()
     clip['height'] = bar_bound['y'] - clip['y']
 
-    const image = await page.screenshot({
+    const result = await page.screenshot({
       clip: clip,
-      fullPage: true,
+      encoding: "base64",
     })
-    const res = 'base64://' + image.toString('base64')
-    logger.verbose(res.slice(0, 20))
-    return res
+    const base64 = "base64://" + result
+    await page.close()
+    return base64
   } catch (err) {
     logger.error(`screenshot ${did} err: `, err)
     return null

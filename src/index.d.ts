@@ -548,3 +548,10 @@ export interface ArrayMessageJson extends Message {
   type: 'json'
   data: { 'data': string }
 }
+
+/** 接口返回的数据格式 */
+export type RespData = {
+  code: 404 | 200 | 500 | 400 = 200,
+  data: any = {},
+  message: string = 'ok'
+}
