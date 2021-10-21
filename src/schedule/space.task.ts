@@ -2,11 +2,11 @@ import { Injectable, Logger } from "@nestjs/common"
 import { Cron, Interval } from "@nestjs/schedule"
 import { BotService } from "src/service/bot.service"
 import { request } from "src/utils/request"
-import { prtScBi } from "src/utils/screenshot"
 import { BiliSpaceTaskData, SpaceApiResponse } from "./task"
 import * as path from 'path'
 import * as fs from 'fs'
 import { CommonEventData, GroupMessageEventData, PrivateMessageEventData } from "src"
+import { ScreenShotUtil } from "src/utils/screenshot"
 
 // 接口实体参考 https://github.com/SocialSisterYi/bilibili-API-collect/issues/143#%E5%8A%A8%E6%80%81%E8%AF%A6%E6%83%85%E5%AF%B9%E8%B1%A1
 
@@ -19,7 +19,7 @@ export class BiliSpaceTask {
 
   private taskList: BiliSpaceTaskData[] = []
 
-  constructor(private readonly botService: BotService) {
+  constructor(private readonly botService: BotService, private readonly screenShotUtil: ScreenShotUtil) {
     // 读取配置文件
     let config = this.getConfig()
     if (config) {
@@ -93,7 +93,7 @@ export class BiliSpaceTask {
    * @param task 任务项
    */
   async sendNotification(did: string, task: BiliSpaceTaskData) {
-    await prtScBi(did).then(base64 => {
+    await this.screenShotUtil.getScreenShot(did).then(base64 => {
       task.bot.forEach(bot => {
         bot.group?.forEach(group_id => {
           this.botService.send('send_group_msg',
