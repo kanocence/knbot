@@ -448,7 +448,7 @@ export class BotService {
    * @returns 
    */
   async send_private_msg(msg: CommonEventData | { self_id: number },
-    userId: number | string, message: Message | string): Promise<OpenApiRes<any>> {
+    userId: number | string, message: Message[] | string): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -470,7 +470,7 @@ export class BotService {
    * @param message 要发送的内容
    */
   async send_group_msg(msg: CommonEventData | { self_id: number },
-    groupId: number | string, message: Message | string): Promise<OpenApiRes<any>> {
+    groupId: number | string, message: Message[] | string): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -494,7 +494,7 @@ export class BotService {
    * @param userId 对方 QQ 号（消息类型为 private 时需要）
    */
   async send_msg(msg: CommonEventData | { self_id: number },
-    message: Message | string, message_type: 'private' | 'group',
+    message: Message[] | string, message_type: 'private' | 'group',
     groupId?: number | string, userId?: number | string) {
     if (groupId) {
       this.send_group_msg(msg, groupId, message)

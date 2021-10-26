@@ -26,20 +26,16 @@ export class SetuModule implements MessageModule {
     }).then((res: AxiosResponse) => {
       if (res.data.length > 0) {
         this.logger.debug('setu res :>> ', res)
-        this.botService.send('send_group_msg',
-          {
-            group_id: msg.group_id,
-            message: res.data
-              .map((i: { urls: { original: string } }) => i.urls?.original)
-              .filter((i: string) => i)
-              .map((i: string) => `[CQ:image,file=${i}]`)
-              .join('\n')
-          },
-          msg)
+        this.botService.send_group_msg(msg, msg.group_id,
+          res.data
+            .map((i: { urls: { original: string } }) => i.urls?.original)
+            .filter((i: string) => i)
+            .map((i: string) => `[CQ:image,file=${i}]`)
+            .join('\n'))
       }
     }).catch((error: any) => {
       this.logger.error(error)
-      this.botService.send('send_group_msg', { group_id: msg.group_id, message: '查询出错' }, msg)
+      this.botService.send_group_msg(msg, msg.group_id, '查询出错')
     })
   }
 }

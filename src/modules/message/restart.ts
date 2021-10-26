@@ -18,6 +18,6 @@ export class RestartModule implements MessageModule {
 
   processor(msg: CommonEventData): void {
     this.logger.log('bot restart: ' + msg.self_id)
-    this.botService.send('set_restart', undefined, msg)
+    this.botService.set_restart(msg)
   }
 }

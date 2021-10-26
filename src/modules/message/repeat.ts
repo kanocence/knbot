@@ -66,6 +66,6 @@ export class RepeatModule implements MessageModule {
 
   /** 发送复读消息 */
   repeat(msg: GroupMessageEventData) {
-    this.botService.send('send_group_msg', { group_id: msg.group_id, message: msg.message }, msg)
+    this.botService.send_group_msg(msg, msg.group_id, msg.message)
   }
 }

@@ -100,15 +100,13 @@ export class BiliSpaceTask {
   async sendNotification(did: string, task: BiliSpaceTaskData) {
     await this.screenShotUtil.getScreenShot(did).then(base64 => {
       task.bot.forEach(bot => {
-        bot.group?.forEach(group_id => {
-          this.botService.send('send_group_msg',
-            { group_id: group_id.id, message: { type: 'image', data: { file: base64 } } },
-            { self_id: bot.id })
+        bot.group?.forEach(group => {
+          this.botService.send_group_msg({ self_id: bot.id }, group.id,
+            [{ type: 'image', data: { file: base64 } }])
         })
         bot.user?.forEach(user_id => {
-          this.botService.send('send_group_msg',
-            { user_id: user_id, message: { type: 'image', data: { file: base64 } } },
-            { self_id: bot.id })
+          this.botService.send_private_msg({ self_id: bot.id }, user_id,
+            [{ type: 'image', data: { file: base64 } }])
         })
       })
     })

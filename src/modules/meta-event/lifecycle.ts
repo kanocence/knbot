@@ -18,12 +18,7 @@ export class LifecycleModule implements MeatEventModule {
   processor(msg: CommonMetaEventData): void {
     if (msg.meta_event_type === 'lifecycle') {
       (global.config.admin as any[]).forEach(i => {
-        this.botService.send('send_private_msg',
-          {
-            user_id: i,
-            message: 'bot login ' + msg.self_id
-          },
-          msg)
+        this.botService.send_private_msg(msg, i, 'bot login ' + msg.self_id)
       })
       let cache = this.bots.find(i => i.id === msg.self_id)
       if (cache) {
