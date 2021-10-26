@@ -21,9 +21,14 @@ export class BiliSpaceTask {
 
   constructor(private readonly botService: BotService, private readonly screenShotUtil: ScreenShotUtil) {
     // 读取配置文件
-    let config = this.getConfig()
+    let config: BiliSpaceTaskData[] | undefined = this.getConfig()
     if (config) {
-      this.taskList = config
+      // 时间戳更新为当前时间(忽略启动前的动态)
+      let now = new Date().getTime() / 1000
+      config.forEach(conf => {
+        conf.timestamp = now
+        this.taskList.push(conf)
+      })
     }
     this.logger.log('create bilibili space task, length: ' + this.taskList.length)
   }
