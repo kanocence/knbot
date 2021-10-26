@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { request } from 'src/utils/request';
 import { AxiosResponse } from "axios"
-import { Anonymous, ApiType, Bot, CommonEventData, FriendListRes, GroupListRes, Message, OpenApiRes } from 'src';
+import { Anonymous, ApiType, Bot, CommonEventData, FriendListRes, GroupListRes, GroupMemberListRes, Message, OpenApiRes } from 'src';
 
 @Injectable()
 export class BotService {
@@ -32,8 +32,8 @@ export class BotService {
     if (!bot) {
       return Promise.reject()
     }
-    this.logger.debug('request data :>> ', data)
-    return
+    // this.logger.debug('request data :>> ', data)
+    // return
     return await request({
       method: 'post',
       url: `${bot.url}/${type}${bot.accessToken}`,
@@ -105,7 +105,7 @@ export class BotService {
    * @param groupId 群号
    * @returns 
    */
-  async get_group_member_list(msg: CommonEventData | { self_id: number }, groupId: number | string): Promise<OpenApiRes<any>> {
+  async get_group_member_list(msg: CommonEventData | { self_id: number }, groupId: number | string): Promise<OpenApiRes<GroupMemberListRes>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()

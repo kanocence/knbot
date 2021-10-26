@@ -36,20 +36,29 @@ export class AppService {
 
   async getBotDetails(id: string | number) {
     // query friends list
-    let friends: FriendListRes[]
-    await this.botService.get_friend_list({ self_id: Number(id) })
-      .then(res => friends = res.data)
+    const friends = await this.botService.get_friend_list({ self_id: Number(id) }).then(res => res.data)
     // query friends avatar
-    await Promise.all(friends.map(async f => {
-      await this.apiService.get_qq_info(f.user_id)
-        .then(res => { f = Object.assign(f, res) })
-    }))
+    await Promise.all(friends.map(async friend =>
+      await this.apiService.get_qq_info(friend.user_id)
+        .then(res => { friend = Object.assign(friend, res) })
+    ))
     // query groups list
-    let groups: GroupListRes[]
-    await this.botService.get_group_list({ self_id: Number(id) })
-      .then(res => groups = res.data)
-    // query groups avatar
+    const groups = await this.botService.get_group_list({ self_id: Number(id) }).then(res => res.data)
+    // query group admins
+    await Promise.all(groups.map(async group => {
+      group.admins = []
+      return await this.botService.get_group_member_list({ self_id: Number(id) }, group.group_id)
+        .then(async groupMembers => {
+          // get admins && owner avatar
+          await Promise.all(groupMembers.data.filter(member => member.role === 'admin')
+            .map(async admin => await this.apiService.get_qq_info(admin.user_id)
+              .then(res => { group.admins.push(Object.assign(admin, res)) })))
 
-    return null
+          await Promise.all(groupMembers.data.filter(member => member.role === 'owner')
+            .map(async owner => await this.apiService.get_qq_info(owner.user_id)
+              .then(res => { group.owner = Object.assign(owner, res) })))
+        })
+    }))
+    return { friends: friends, groups: groups }
   }
 }

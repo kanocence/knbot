@@ -569,11 +569,32 @@ export type GroupListRes = {
   group_memo: string,
   group_name: string,
   max_member_count: number,
-  member_count: number
+  member_count: number,
+  admins?: any[],
+  owner?: {}
 }
 
 export type FriendListRes = {
   nickname: string,
   remark: string,
+  user_id: number
+}
+
+export type GroupMemberListRes = {
+  age: number,
+  area: string,
+  card: string,
+  card_changeable: boolean,
+  group_id: number,
+  join_time: number,
+  last_sent_time: number,
+  level: string,
+  nickname: string,
+  role: 'owner' | 'member' | 'admin',
+  sex: string,
+  shut_up_timestamp: number,
+  title: string,
+  title_expire_time: number,
+  unfriendly: boolean,
   user_id: number
 }
