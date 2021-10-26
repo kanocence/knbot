@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { request } from 'src/utils/request';
 import { AxiosResponse } from "axios"
-import { Anonymous, ApiType, Bot, CommonEventData, Message } from 'src';
+import { Anonymous, ApiType, Bot, CommonEventData, FriendListRes, GroupListRes, Message, OpenApiRes } from 'src';
 
 @Injectable()
 export class BotService {
@@ -32,8 +32,8 @@ export class BotService {
     if (!bot) {
       return Promise.reject()
     }
-    // this.logger.debug('request data :>> ', data)
-    // return
+    this.logger.debug('request data :>> ', data)
+    return
     return await request({
       method: 'post',
       url: `${bot.url}/${type}${bot.accessToken}`,
@@ -55,7 +55,7 @@ export class BotService {
    * @param msg 
    * @returns 
    */
-  async get_friend_list(msg: CommonEventData | { self_id: number }) {
+  async get_friend_list(msg: CommonEventData | { self_id: number }): Promise<OpenApiRes<FriendListRes>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -71,7 +71,7 @@ export class BotService {
    * @param msg 
    * @returns 
    */
-  async get_group_list(msg: CommonEventData | { self_id: number }) {
+  async get_group_list(msg: CommonEventData | { self_id: number }): Promise<OpenApiRes<GroupListRes>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -88,7 +88,7 @@ export class BotService {
    * @param groupId 群号
    * @returns 
    */
-  async get_group_info(msg: CommonEventData | { self_id: number }, groupId: number | string) {
+  async get_group_info(msg: CommonEventData | { self_id: number }, groupId: number | string): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -105,7 +105,7 @@ export class BotService {
    * @param groupId 群号
    * @returns 
    */
-  async get_group_member_list(msg: CommonEventData | { self_id: number }, groupId: number | string) {
+  async get_group_member_list(msg: CommonEventData | { self_id: number }, groupId: number | string): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -125,7 +125,7 @@ export class BotService {
    */
   async get_group_honor_info(msg: CommonEventData | { self_id: number },
     groupId: number | string,
-    type: 'talkative' | 'performer' | 'legend' | 'strong_newbie' | 'emotion') {
+    type: 'talkative' | 'performer' | 'legend' | 'strong_newbie' | 'emotion'): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -144,7 +144,7 @@ export class BotService {
    * @returns 
    */
   async get_group_member_info(msg: CommonEventData | { self_id: number },
-    groupId: number | string, userId: number | string) {
+    groupId: number | string, userId: number | string): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -161,7 +161,7 @@ export class BotService {
    * @param userId QQ 号
    * @returns 
    */
-  async get_stranger_info(msg: CommonEventData | { self_id: number }, userId: number | string) {
+  async get_stranger_info(msg: CommonEventData | { self_id: number }, userId: number | string): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -177,7 +177,7 @@ export class BotService {
    * @param msg 
    * @returns 
    */
-  async get_login_info(msg: CommonEventData | { self_id: number }) {
+  async get_login_info(msg: CommonEventData | { self_id: number }): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -194,7 +194,7 @@ export class BotService {
    * @param messageId 消息 ID
    * @returns 
    */
-  async get_msg(msg: CommonEventData | { self_id: number }, messageId: number | string) {
+  async get_msg(msg: CommonEventData | { self_id: number }, messageId: number | string): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -211,7 +211,7 @@ export class BotService {
    * @param id 合并转发 ID
    * @returns 
    */
-  async get_forward_msg(msg: CommonEventData | { self_id: number }, id: number | string) {
+  async get_forward_msg(msg: CommonEventData | { self_id: number }, id: number | string): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -228,7 +228,7 @@ export class BotService {
    * @param userId 对方 QQ 号
    * @returns 
    */
-  async send_like(msg: CommonEventData | { self_id: number }, userId: number | string) {
+  async send_like(msg: CommonEventData | { self_id: number }, userId: number | string): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -248,7 +248,7 @@ export class BotService {
    * @returns 
    */
   async set_group_kick(msg: CommonEventData | { self_id: number },
-    groupId: number | string, userId: number | string, reject: boolean) {
+    groupId: number | string, userId: number | string, reject: boolean): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -265,7 +265,7 @@ export class BotService {
    * @param id 消息 ID
    * @returns 
    */
-  async delete_msg(msg: CommonEventData | { self_id: number }, id: number | string) {
+  async delete_msg(msg: CommonEventData | { self_id: number }, id: number | string): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -281,7 +281,7 @@ export class BotService {
    * @param msg 
    * @returns 
    */
-  async clean_cache(msg: CommonEventData | { self_id: number }) {
+  async clean_cache(msg: CommonEventData | { self_id: number }): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -297,7 +297,7 @@ export class BotService {
    * @param msg 
    * @returns 
    */
-  async get_status(msg: CommonEventData | { self_id: number }) {
+  async get_status(msg: CommonEventData | { self_id: number }): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -313,7 +313,7 @@ export class BotService {
    * @param msg 
    * @returns 
    */
-  async get_version_info(msg: CommonEventData | { self_id: number }) {
+  async get_version_info(msg: CommonEventData | { self_id: number }): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -329,7 +329,7 @@ export class BotService {
    * @param msg 
    * @returns 
    */
-  async can_send_record(msg: CommonEventData | { self_id: number }) {
+  async can_send_record(msg: CommonEventData | { self_id: number }): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -345,7 +345,7 @@ export class BotService {
    * @param msg 
    * @returns 
    */
-  async can_send_image(msg: CommonEventData | { self_id: number }) {
+  async can_send_image(msg: CommonEventData | { self_id: number }): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -362,7 +362,7 @@ export class BotService {
    * @param file 收到的图片文件名（消息段的 file 参数），如 asd.jpg
    * @returns 
    */
-  async get_image(msg: CommonEventData | { self_id: number }, file: string) {
+  async get_image(msg: CommonEventData | { self_id: number }, file: string): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -381,7 +381,7 @@ export class BotService {
    * @returns 
    */
   async get_record(msg: CommonEventData | { self_id: number }, file: string,
-    format: 'mp3' | 'amr' | 'wma' | 'm4a' | 'spx' | 'ogg' | 'wav' | 'flac') {
+    format: 'mp3' | 'amr' | 'wma' | 'm4a' | 'spx' | 'ogg' | 'wav' | 'flac'): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -397,7 +397,7 @@ export class BotService {
    * @param msg 
    * @returns 
    */
-  async get_credentials(msg: CommonEventData | { self_id: number }) {
+  async get_credentials(msg: CommonEventData | { self_id: number }): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -413,7 +413,7 @@ export class BotService {
    * @param msg 
    * @returns 
    */
-  async get_csrf_token(msg: CommonEventData | { self_id: number }) {
+  async get_csrf_token(msg: CommonEventData | { self_id: number }): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -429,7 +429,7 @@ export class BotService {
    * @param msg 
    * @returns 
    */
-  async set_restart(msg: CommonEventData | { self_id: number }) {
+  async set_restart(msg: CommonEventData | { self_id: number }): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -448,7 +448,7 @@ export class BotService {
    * @returns 
    */
   async send_private_msg(msg: CommonEventData | { self_id: number },
-    userId: number | string, message: Message | string) {
+    userId: number | string, message: Message | string): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -470,7 +470,7 @@ export class BotService {
    * @param message 要发送的内容
    */
   async send_group_msg(msg: CommonEventData | { self_id: number },
-    groupId: number | string, message: Message | string) {
+    groupId: number | string, message: Message | string): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -511,7 +511,7 @@ export class BotService {
    * @param duration 禁言时长，单位秒，0 表示取消禁言
    */
   async set_group_ban(msg: CommonEventData | { self_id: number },
-    groupId: number | string, userId: number | string, duration: number) {
+    groupId: number | string, userId: number | string, duration: number): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -533,7 +533,7 @@ export class BotService {
    * @returns 
    */
   async set_group_anonymous_ban(msg: CommonEventData | { self_id: number }, duration: number,
-    groupId: number | string, anonymous: Anonymous, anonymous_flag?: string, flag?: string) {
+    groupId: number | string, anonymous: Anonymous, anonymous_flag?: string, flag?: string): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -556,7 +556,7 @@ export class BotService {
    * @param msg 群号
    * @param groupId 是否禁言
    */
-  async set_group_whole_ban(msg: CommonEventData | { self_id: number }, groupId: string | number) {
+  async set_group_whole_ban(msg: CommonEventData | { self_id: number }, groupId: string | number): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -575,7 +575,7 @@ export class BotService {
    * @param enable true 为设置，false 为取消
    */
   async set_group_admin(msg: CommonEventData | { self_id: number }, groupId: string | number,
-    userId: string | number, enable: boolean) {
+    userId: string | number, enable: boolean): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -593,7 +593,7 @@ export class BotService {
    * @param enable 是否允许匿名聊天
    */
   async set_group_anonymous(msg: CommonEventData | { self_id: number }, groupId: string | number,
-    enable: boolean) {
+    enable: boolean): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -612,7 +612,7 @@ export class BotService {
    * @param card 群名片内容，不填或空字符串表示删除群名片
    */
   async set_group_card(msg: CommonEventData | { self_id: number }, groupId: string | number,
-    userId: string | number, card: string) {
+    userId: string | number, card: string): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -631,7 +631,7 @@ export class BotService {
    * @returns 
    */
   async set_group_name(msg: CommonEventData | { self_id: number }, groupId: string | number,
-    groupName: string) {
+    groupName: string): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -650,7 +650,7 @@ export class BotService {
    * @returns 
    */
   async set_group_leave(msg: CommonEventData | { self_id: number }, groupId: string | number,
-    is_dismiss: string) {
+    is_dismiss: string): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -671,7 +671,7 @@ export class BotService {
    * @returns 
    */
   async set_group_special_title(msg: CommonEventData | { self_id: number }, groupId: string | number,
-    userId: string | number, specialTitle: string | number, duration: number) {
+    userId: string | number, specialTitle: string | number, duration: number): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -691,7 +691,7 @@ export class BotService {
    * @returns 
    */
   async set_friend_add_request(msg: CommonEventData | { self_id: number }, flag: string,
-    approve: boolean, remark: string) {
+    approve: boolean, remark: string): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()
@@ -711,7 +711,7 @@ export class BotService {
    * @returns 
    */
   async set_group_add_request(msg: CommonEventData | { self_id: number }, flag: string,
-    approve: boolean, remark: string) {
+    approve: boolean, remark: string): Promise<OpenApiRes<any>> {
     const bot = this.getBot(msg.self_id)
     if (!bot) {
       return Promise.reject()

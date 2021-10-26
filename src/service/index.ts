@@ -1,3 +1,4 @@
+import { ApiService } from "./api.service";
 import { BotService } from "./bot.service";
 import { MessageService } from "./message.service";
 import { MetaEventService } from "./meta-event.service";
@@ -7,4 +8,4 @@ import { RequestService } from "./request.service";
 /**
  * 导出的所有service
  */
-export const Services = [BotService, MessageService, MetaEventService, NoticeService, RequestService]
+export const Services = [BotService, ApiService, MessageService, MetaEventService, NoticeService, RequestService]
