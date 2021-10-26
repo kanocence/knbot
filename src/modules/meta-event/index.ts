@@ -1,18 +1,18 @@
 import { Injectable } from "@nestjs/common";
-import { LoginModule } from "./login";
+import { LifecycleModule } from "./lifecycle";
 
 /** 导出注册方法 */
 @Injectable()
 export class RegisterMetaEventModules {
 
   constructor(
-    private loginModule: LoginModule
+    private lifecucleModule: LifecycleModule
   ) { }
 
   register() {
-    return [this.loginModule]
+    return [this.lifecucleModule]
   }
 }
 
 /** 导出message模块 */
-export const MetaEventModules = [RegisterMetaEventModules, LoginModule]
+export const MetaEventModules = [RegisterMetaEventModules, LifecycleModule]

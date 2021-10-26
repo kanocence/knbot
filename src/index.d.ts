@@ -15,10 +15,17 @@ export type ApiType =
 
 /** 注册机器人信息 */
 export interface Bot {
+  /** 接口地址 */
   url: string
   id: number
   token?: string
   online?: boolean
+  /** 上次lifecycle后心跳次数 */
+  beats?: number
+  /** 上次lifecycle */
+  last_lifecycle: number
+  /** 上次心跳 */
+  last_beat: number
 }
 
 
