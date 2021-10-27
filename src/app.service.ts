@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { group } from 'console';
 import { FriendListRes, GroupListRes } from 'src';
 import { LifecycleModule } from './modules/meta-event/lifecycle';
 import { ApiService } from './service/api.service';
@@ -26,11 +27,6 @@ export class AppService {
       await this.botService.get_stranger_info({ self_id: bot.id }, bot.id)
         .then(res => { bot = Object.assign(bot, res.data) })
     ))
-    // query bot avatar
-    // await Promise.all(bots.map(async bot =>
-    //   await this.apiService.get_qq_info(bot.id)
-    //     .then(res => { bot = Object.assign(bot, res) })
-    // ))
     return bots
   }
 
