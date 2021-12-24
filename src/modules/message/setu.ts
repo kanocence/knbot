@@ -30,7 +30,7 @@ export class SetuModule implements MessageModule {
           res.data
             .map((i: { urls: { original: string } }) => i.urls?.original)
             .filter((i: string) => i)
-            .map((i: string) => `[CQ:image,file=${i}]`)
+            .map((i: string) => `[CQ:image,file=${i.replace('i.pixiv.cat', 'i.pixiv.re')}]`)
             .join('\n'))
       }
     }).catch((error: any) => {

@@ -455,7 +455,7 @@ export class BotService {
     }
     return await request({
       method: 'post',
-      url: `${bot.url}/set_restart${bot.accessToken}`,
+      url: `${bot.url}/send_private_msg${bot.accessToken}`,
       data: {
         user_id: userId,
         message
@@ -477,7 +477,7 @@ export class BotService {
     }
     return await request({
       method: 'post',
-      url: `${bot.url}/set_restart${bot.accessToken}`,
+      url: `${bot.url}/send_group_msg${bot.accessToken}`,
       data: {
         group_id: groupId,
         message

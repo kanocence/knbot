@@ -9,7 +9,9 @@ export class LifecycleModule implements MeatEventModule {
 
   bots: Bot[]
 
-  constructor(private readonly botService: BotService) { }
+  constructor(private readonly botService: BotService) { 
+    this.bots = []
+  }
 
   validator(msg: CommonMetaEventData): boolean {
     return msg.post_type === 'meta_event'
@@ -26,7 +28,7 @@ export class LifecycleModule implements MeatEventModule {
         cache.beats = 0
         cache.last_beat = 0
       } else {
-        let { id, url, token } = global.config.find((i: Bot) => i.id === msg.self_id)
+        let { id, url, token } = global.config.bots.find((i: Bot) => i.id === msg.self_id)
         this.bots.push({
           id: id,
           url: url,
