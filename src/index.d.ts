@@ -598,3 +598,14 @@ export type GroupMemberListRes = {
   unfriendly: boolean,
   user_id: number
 }
+
+/**
+ * 2层指令集
+ * 
+ * cmd type -options [args]
+ */
+export type InstructionSet = {
+  [key: string]: string | {
+    [key: string]: string
+  }
+}
